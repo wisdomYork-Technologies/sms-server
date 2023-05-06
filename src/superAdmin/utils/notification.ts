@@ -1,16 +1,17 @@
 import nodemailer from "nodemailer";
 import {
   FromAdminMail,
-  GMAIL_PASS,
-  GMAIL_USER,
   userSubject,
 } from "../../config/DbConfig";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 const transport = nodemailer.createTransport({
-  service: "gmail" /*service and host are the same thing */,
+  service: "gmail",
   auth: {
-    user: GMAIL_USER,
-    pass: GMAIL_PASS,
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
   },
   tls: {
     rejectUnauthorized: false,
@@ -30,13 +31,14 @@ export const mailSent = async (
       subject: userSubject,
       html,
     });
+    // response.accepted
     return response;
   } catch (err) {
     console.log(err);
   }
 };
 
-export const RegistrationEmail = (link: string): string => {
+export const RegistrationEmail = (link: string, user: string): string => {
   let response = `
       <div style="max-width:700px;
       margin:auto;
@@ -49,9 +51,10 @@ export const RegistrationEmail = (link: string): string => {
       text-transform:uppercase;
       color:teal;
       ">
-      Welcome to CrowdPlay
+      Welcome to Edu-Smart School Management System
       </h2>
-      <p>Hi there, follow the link to verify your account. The link expires in 10 minutes.</p>
+      <p>Hi ${user}, thanks for signing up on our innovative School Management platform, 
+      Please follow the link to verify your account. The link expires in 30 minutes.</p>
        ${link}
        <h3>DO NOT DISCLOSE TO ANYONE<h3>
        </div>

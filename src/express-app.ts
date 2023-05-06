@@ -10,7 +10,7 @@ const expressConfig = async (app: Application) => {
   app.use(logger("dev"));
   app.use(cors());
   app.use(cookieParser());
-  app.use("/super", SuperAdminRoutes);
+  app.use("/api/super", SuperAdminRoutes);
 };
 
 export default expressConfig;
