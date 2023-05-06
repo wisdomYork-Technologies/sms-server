@@ -8,8 +8,7 @@ import {
 } from "../utils/validator";
 import { UserRegister, UserLogin } from "./client-service.dto";
 import ErrorObject from "../../http-Response/index";
-import ClientRepository from "../database/repository/index";
-import { SuperAdminModel } from "../database/models/Client";
+import SuperRepository from "../database/repository/index";
 
 const CreateSuperAdmin = async (userDetails: UserRegister) => {
   //validate input
@@ -24,38 +23,36 @@ const CreateSuperAdmin = async (userDetails: UserRegister) => {
   const salt = await GenerateSalt();
   //hash password
   const userPassword = await GeneratePassword(userDetails.password, salt);
-
   //Spread the object in order to insert the newly hashed password and the generated salt.
   const newUser = { ...userDetails, password: userPassword, salt };
   //send to repository to be created
-  const createdUser = await ClientRepository.CreateUserRepository(newUser);
+  const createdUser = await SuperRepository.CreateSuperRepository(newUser);
   return createdUser;
 };
 
 const VerifySuperAdminService = async (token: string) => {
-     // Verify the signature
-     const { _id, email, verified } = await verifySignature(token);
-     
-     //Send the Id to the Client repository for verification.
-     const verifyUser = await ClientRepository.VerifyUserRepository(_id)
-     return verifyUser;
-  
-}
+  // Verify the signature
+  // const { _id, email, verified } = await verifySignature(token);
+
+  // //Send the Id to the Client repository for verification.
+  // const verifyUser = await SuperRepository.VerifyUserRepository(_id);
+  // return verifyUser;
+};
 
 const LoginSuperAdminService = async (userInput: UserLogin) => {
-    //Validate User Input
-    const validateResult = loginSchema.validate(userInput, option);
-      if (validateResult.error) {
-        return ErrorObject.UserInputOrOutputError(
-            validateResult.error.details[0].message
-          );
-      }
+  //Validate User Input
+  // const validateResult = loginSchema.validate(userInput, option);
+  // if (validateResult.error) {
+  //   return ErrorObject.UserInputOrOutputError(
+  //     validateResult.error.details[0].message
+  //   );
+  // }
 
-    const loginUser = await ClientRepository.LoginRepository(userInput)
-    return loginUser;
-}
+  // const loginUser = await SuperRepository.LoginRepository(userInput);
+  // return loginUser;
+};
 export default {
   CreateSuperAdmin,
   VerifySuperAdminService,
-  LoginSuperAdminService
+  LoginSuperAdminService,
 };
