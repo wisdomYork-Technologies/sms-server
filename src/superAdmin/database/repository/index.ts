@@ -1,16 +1,27 @@
-import { SuperAdminAttributes, SuperAdminInstance } from "../models/Super";
+import {
+  SuperAdminAttributes,
+  SuperAdminInstance,
+} from "../../../migrations/Super";
 import { SuperAdminRepositoryDetails } from "./superRepository.dto";
 import StatusResponseObject from "../../../http-Response/index";
 import { GenerateSignature, validatePassword } from "../../utils/validator";
 import { mailSent, RegistrationEmail } from "../../utils/notification";
-import { FromAdminMail } from "../../../config/DbConfig";
+import {
+  CLIENT_URL,
+  FromAdminMail,
+  SERVER_URL,
+} from "../../../config/DbConfig";
 import { UserLogin } from "../../services/client-service.dto";
 
 /**===================================== Register SuperAdmin ===================================== **/
 
-const CreateSuperRepository = async (userInput: SuperAdminRepositoryDetails) => {
+const CreateSuperRepository = async (
+  userInput: SuperAdminRepositoryDetails
+) => {
   //check if the user exists
-  const User = await SuperAdminInstance.findOne({ where: { email: userInput.email } });
+  const User = await SuperAdminInstance.findOne({
+    where: { email: userInput.email },
+  });
 
   if (User) {
     return StatusResponseObject.UserInputOrOutputError("User already exist!");
@@ -25,8 +36,10 @@ const CreateSuperRepository = async (userInput: SuperAdminRepositoryDetails) => 
       lastName: userInput.lastName,
       email: userInput.email,
       password: userInput.password,
+      schoolName: userInput.schoolName,
+      schoolLocation: userInput.schoolLocation,
       salt: userInput.salt,
-      role: "super"
+      role: "super",
     });
     if (!createdUser) {
       return StatusResponseObject.UserInputOrOutputError(
@@ -40,8 +53,12 @@ const CreateSuperRepository = async (userInput: SuperAdminRepositoryDetails) => 
     });
 
     //send Email to user
-    const link = `Press <a href=${process.env.BASE_URL}/super/verify/${signature}>here</a> to verify your account. Thanks.`;
-    const html = RegistrationEmail(link, createdUser.firstName);
+    const link = `Press <a href=${SERVER_URL}/super/verify/${signature}>here</a> to verify your account. Thanks.`;
+    const html = RegistrationEmail(link, {
+      firstName: createdUser.firstName,
+      password: userInput.defPassword,
+      email: createdUser.email,
+    });
     await mailSent(
       FromAdminMail,
       createdUser.email,
@@ -49,7 +66,7 @@ const CreateSuperRepository = async (userInput: SuperAdminRepositoryDetails) => 
       html
     );
 
-    //check if user exist
+    //returning a response for successful creation
     return StatusResponseObject.SuccessfulResponse(
       "You have registered successfully, Check your email for verification"
     );
@@ -58,34 +75,32 @@ const CreateSuperRepository = async (userInput: SuperAdminRepositoryDetails) => 
 
 /**===================================== Verify SuperAdmin ===================================== **/
 
-const VerifySuperRepository = async (_id: string) => {
+const VerifySuperRepository = async (id: string) => {
   // Find the user with the matching verification token
-  // const user = await SuperAdminInstance.findOne({ _id });
-  // if (!user) {
-  //   return StatusResponseObject.UserInputOrOutputError(
-  //     "Invalid verification token"
-  //   );
-  // }
-
-  // // Set the user's verified status to true
-  // const User = await SuperAdminInstance.findByIdAndUpdate(
-  //   { _id },
-  //   { verified: true }
-  // );
-  // // Redirect success message
-  // return StatusResponseObject.SuccessfulResponse("Successfully verified user");
+  const user = await SuperAdminInstance.findOne({ where: { id } });
+  if (!user) {
+    return StatusResponseObject.UserInputOrOutputError(
+      "Invalid verification token"
+    );
+  }
+  // Set the user's verified status to true
+  const User = await SuperAdminInstance.update(
+    { verified: true },
+    { where: { id } }
+  );
+  await user.save();
+  // Redirect success message
+  return StatusResponseObject.SuccessfulResponse("Successfully verified user");
 };
 
 const LoginRepository = async (userInput: UserLogin) => {
   //check if the user exist
   // const User = await SuperAdminInstance.findOne({ email: userInput.email });
-
   // if (!User) {
   //   return StatusResponseObject.UserInputOrOutputError(
   //     "Incorrect login details"
   //   );
   // }
-
   // if (User.verified) {
   //   const validation = await validatePassword(
   //     userInput.password,

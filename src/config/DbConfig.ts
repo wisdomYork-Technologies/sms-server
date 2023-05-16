@@ -29,7 +29,7 @@ export const connectDb = async () => {
   try {
     await db.authenticate();
     await db.sync();
-    console.log("Connection has been established successfully.");
+    console.log("Connection has been established successfully to database.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
@@ -46,3 +46,4 @@ export const GMAIL_USER = process.env.GMAIL_PASS as string;
 export const Client_ID = process.env.Client_ID;
 export const Client_Secret = process.env.Client_Secret;
 export const CLIENT_URL = process.env.CLIENT_URL!;
+export const SERVER_URL = process.env.SERVER_URL!;

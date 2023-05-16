@@ -5,20 +5,26 @@ import { APP_SECRET } from "../../config/DbConfig";
 import { AuthPayload } from "./interface.dto";
 
 export const registerSchema = Joi.object().keys({
-  firstName: Joi.string(),
-  lastName: Joi.string(),
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
   phone: Joi.string(),
   address: Joi.string(),
-  email: Joi.string().email({ tlds: { allow: false } }),
-  password: Joi.string()
-    .pattern(new RegExp("[ A-Za-z0-9_@./#&+-]*$"))
-    .min(8)
-    .required(),
-  confirm_password: Joi.any()
-    .equal(Joi.ref("password"))
-    .label("Confirm password")
-    .messages({ "any.only": "{{#label}} does not match" })
-    .required(),
+  schoolName: Joi.string().required(),
+  schoolLocation: Joi.string().required(),
+  email: Joi.string()
+    .required()
+    .email({ tlds: { allow: false } })
+    .label("email")
+    .messages({ "string.only": "{{#label}} must be a valid email" }),
+  // password: Joi.string()
+  //   .pattern(new RegExp("[ A-Za-z0-9_@./#&+-]*$"))
+  //   .min(8)
+  //   .required(),
+  // confirm_password: Joi.any()
+  //   .equal(Joi.ref("password"))
+  //   .label("Confirm password")
+  //   .messages({ "any.only": "{{#label}} does not match" })
+  //   .required(),
 });
 
 export const loginSchema = Joi.object().keys({
@@ -52,7 +58,11 @@ export const GenerateSignature = async (payload: AuthPayload) => {
 };
 
 export const verifySignature = async (signature: string) => {
-  return jwt.verify(signature, APP_SECRET) as JwtPayload;
+  try {
+    return jwt.verify(signature, APP_SECRET) as AuthPayload;
+  } catch (error: any) {
+    return "error in verifying token";
+  }
 };
 
 export const validatePassword = async (
@@ -61,4 +71,9 @@ export const validatePassword = async (
   salt: string
 ) => {
   return (await GeneratePassword(enteredPassword, salt)) === savedPassword;
+};
+
+export const generateRandomNum = () => {
+  const randomNumber = Math.floor(Math.random() * 1000);
+  return randomNumber;
 };

@@ -4,6 +4,7 @@ import {
   userSubject,
 } from "../../config/DbConfig";
 import dotenv from "dotenv";
+import { EmailPayload } from "./interface.dto";
 dotenv.config();
 
 
@@ -38,7 +39,8 @@ export const mailSent = async (
   }
 };
 
-export const RegistrationEmail = (link: string, user: string): string => {
+
+export const RegistrationEmail = (link: string, user: EmailPayload): string => {
   let response = `
       <div style="max-width:700px;
       margin:auto;
@@ -53,9 +55,16 @@ export const RegistrationEmail = (link: string, user: string): string => {
       ">
       Welcome to Edu-Smart School Management System
       </h2>
-      <p>Hi ${user}, thanks for signing up on our innovative School Management platform, 
+      <p>Hi ${user.firstName}, thanks for signing up on our innovative School Management platform, 
       Please follow the link to verify your account. The link expires in 30 minutes.</p>
        ${link}
+
+       <p>After verifying your account, you can use these details below to login to your account. 
+       It is strongly recommended that you change your password after your first login.</p>
+
+       <h3>Login Credentials</h3>
+       <p>Email: ${user.email}</p>
+       <p>Password (Case sensitive): ${user.password}</p>
        <h3>DO NOT DISCLOSE TO ANYONE<h3>
        </div>
       `;

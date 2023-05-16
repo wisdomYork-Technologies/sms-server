@@ -1,12 +1,12 @@
 export interface UserRegister {
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string,
-    confirm_password: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  schoolName: string;
+  schoolLocation: string;
 }
 
-export interface UserLogin{
-    email: string,
-    password: string,
+export interface UserLogin {
+  email: string;
+  password: string;
 }

@@ -8,8 +8,11 @@
   "author": "ifiokInyang <ifiok.inyang@decagon.dev>",
   "scripts": {
     "compile": "tsc --w",
-    "start:dev": "nodemon dist/index.js",
-    "start:prod": "tsc && node dist/index.js"
+    "start:dev": "sequelize-cli db:migrate && nodemon dist/index.js",
+    "start:prod": "tsc && node dist/index.js",
+    "migrateUp": "sequelize-cli db:migrate",
+    "migrateDown": "sequelize-cli db:migrate:undo",
+    "undoAll": "sequelize-cli db:migrate:undo:all"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -26,6 +29,7 @@
     "nodemailer": "^6.9.1",
     "pg": "^8.10.0",
     "sequelize": "^6.31.1",
+    "sequelize-cli-typescript": "^3.2.0-c",
     "typescript": "^5.0.4"
   },
   "devDependencies": {
