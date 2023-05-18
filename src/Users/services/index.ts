@@ -1,5 +1,6 @@
 import {
   GeneratePassword,
+  generateRandomNum,
   GenerateSalt,
   loginSchema,
   option,
@@ -21,10 +22,20 @@ const CreateSuperAdmin = async (userDetails: UserRegister) => {
 
   //generate salt
   const salt = await GenerateSalt();
+  //Generate default password
+  const defaultPassword = `Vjx*${generateRandomNum()}${
+    userDetails.schoolName[0]
+  }${generateRandomNum()}`;
+
   //hash password
-  const userPassword = await GeneratePassword(userDetails.password, salt);
+  const userPassword = await GeneratePassword(defaultPassword, salt);
   //Spread the object in order to insert the newly hashed password and the generated salt.
-  const newUser = { ...userDetails, password: userPassword, salt };
+  const newUser = {
+    ...userDetails,
+    password: userPassword,
+    defPassword: defaultPassword,
+    salt,
+  };
   //send to repository to be created
   const createdUser = await SuperRepository.CreateSuperRepository(newUser);
   return createdUser;
@@ -32,11 +43,14 @@ const CreateSuperAdmin = async (userDetails: UserRegister) => {
 
 const VerifySuperAdminService = async (token: string) => {
   // Verify the signature
-  // const { _id, email, verified } = await verifySignature(token);
-
-  // //Send the Id to the Client repository for verification.
-  // const verifyUser = await SuperRepository.VerifyUserRepository(_id);
-  // return verifyUser;
+  const authPayloadOrError = await verifySignature(token);
+  if (typeof authPayloadOrError === "string") {
+    // Handle the error case
+    return ErrorObject.UserInputOrOutputError(authPayloadOrError);
+  }
+  const { id, email, verified } = authPayloadOrError; //Send the Id to the Client repository for verification.
+  const verifyUser = await SuperRepository.VerifySuperRepository(id);
+  return verifyUser;
 };
 
 const LoginSuperAdminService = async (userInput: UserLogin) => {
@@ -47,7 +61,6 @@ const LoginSuperAdminService = async (userInput: UserLogin) => {
   //     validateResult.error.details[0].message
   //   );
   // }
-
   // const loginUser = await SuperRepository.LoginRepository(userInput);
   // return loginUser;
 };

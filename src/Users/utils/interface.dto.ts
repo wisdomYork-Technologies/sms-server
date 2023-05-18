@@ -9,3 +9,9 @@ export interface LoginResponseData{
     email: string,
     verified: boolean,
 }
+
+export interface EmailPayload {
+  firstName: string;
+  password: string;
+  email: string;
+}

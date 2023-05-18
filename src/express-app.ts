@@ -3,7 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import createHttpError from "http-errors";
 import logger from "morgan";
-import SuperAdminRoutes from "./superAdmin/api/routes/index";
+import SuperAdminRoutes from "./Users/api/routes/index";
 
 const expressConfig = async (app: Application) => {
   app.use(express.json());

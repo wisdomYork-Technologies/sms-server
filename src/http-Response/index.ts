@@ -1,14 +1,15 @@
 import { Response } from "express";
 import { CLIENT_URL } from "../config/DbConfig";
-import { LoginResponseData } from "../superAdmin/utils/interface.dto";
+import { LoginResponseData } from "../Users/utils/interface.dto";
 import { StatusCodes } from "http-status-codes";
 
-//Used for returning a success message after creating a resource in the databse
+//Used for returning a success message after creating a resource in the database
 //** Used mainly in the repository *//
 const SuccessfulResponse = (successMsg: string) => {
   return { message: successMsg };
 };
 
+//Used for returning a success message with some details in the repository
 const SuccessfullyLoggedIn = (data: LoginResponseData) => {
   return { message: data };
 };
@@ -18,23 +19,31 @@ const UserInputOrOutputError = (errMessage: any) => {
   return { Error: errMessage };
 };
 
-//Used mainly for catch blocks in the controller
-const HttpServerError = (res: Response, errMessage: string, route: string) => {
-  return {
-    message: res.status(500).json({
-      Error: errMessage,
-      route,
-    }),
-  };
-};
-
 class HttpUserStatus {
-  CreateSuccess(data: any, res: Response) {
-    return res.status(StatusCodes.CREATED).json({ message: data.message });
+  CreateSuccessOrFailure(data: any, res: Response) {
+    if (data && "Error" in data) {
+      return this.UserInputError(data, res);
+    } else {
+      return res.status(StatusCodes.CREATED).json({ message: data.message });
+    }
+    // const successResponse = res
+    //   .status(StatusCodes.CREATED)
+    //   .json({ message: data.message });
+    // console.log("success is ", successResponse)
+    // userInputErrorHandler(data, res, successResponse);
   }
 
-  VerifiedSuccess(res: Response) {
-    return res.redirect(StatusCodes.MOVED_PERMANENTLY, `${CLIENT_URL}/login`);
+  VerifiedSuccessOrFailure(data: any, res: Response) {
+    // const successRedirect = res.redirect(
+    //   StatusCodes.MOVED_PERMANENTLY,
+    //   `${CLIENT_URL}/login`
+    // );
+    if (data && "Error" in data) {
+      return this.UserInputError(data, res);
+    } else {
+      return res.redirect(StatusCodes.MOVED_PERMANENTLY, `${CLIENT_URL}/login`);
+    }
+    // userInputErrorHandler(data, res, successRedirect);
   }
 
   LoginSuccess({ message }: { message: string }, res: Response) {
@@ -45,10 +54,12 @@ class HttpUserStatus {
     return res.status(StatusCodes.BAD_REQUEST).json({ Error });
   }
 
-  ServerError(res: Response) {
+  //Used mainly for catch blocks in the controller
+
+  ServerError(res: Response, error: any, route: string) {
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ Error: "Internal Server error" });
+      .json({ Error: "Internal Server error", error, route });
   }
 }
 
@@ -87,6 +98,5 @@ export default {
   SuccessfulResponse,
   SuccessfullyLoggedIn,
   UserInputOrOutputError,
-  HttpServerError,
   HttpUserStatus,
 };

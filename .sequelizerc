@@ -1,0 +1,18 @@
+const path = require("path");
+
+//To be uncommented when trying to generate migration and models in the src folder
+module.exports = {
+  config: path.resolve("./config/config.json"),
+  "migrations-path": path.resolve("src/migrations"),
+  "models-path": path.resolve("src/models"),
+};
+
+
+
+//To be enabled when running migrations to the db, so that sequelize cli can look in the dist folder to migrate schema structure 
+//to database.
+// module.exports = {
+//   config: path.resolve("./config/config.json"),
+//   "migrations-path": path.resolve("dist/migrations"),
+//   "models-path": path.resolve("dist/models"),
+// };
