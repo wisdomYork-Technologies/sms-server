@@ -26,18 +26,11 @@ class HttpUserStatus {
     } else {
       return res.status(StatusCodes.CREATED).json({ message: data.message });
     }
-    // const successResponse = res
-    //   .status(StatusCodes.CREATED)
-    //   .json({ message: data.message });
-    // console.log("success is ", successResponse)
-    // userInputErrorHandler(data, res, successResponse);
+   
   }
 
   VerifiedSuccessOrFailure(data: any, res: Response) {
-    // const successRedirect = res.redirect(
-    //   StatusCodes.MOVED_PERMANENTLY,
-    //   `${CLIENT_URL}/login`
-    // );
+  
     if (data && "Error" in data) {
       return this.UserInputError(data, res);
     } else {
@@ -62,37 +55,6 @@ class HttpUserStatus {
       .json({ Error: "Internal Server error", error, route });
   }
 }
-
-// //Houses all final responses that will be returned to the client
-// const HttpUserStatusl = (data: any, res: Response) => {
-//   //If a users account has been successfully created, return this to the client
-//   if (
-//     data.message ===
-//     "You have registered successfully, Check your email for verification"
-//   ) {
-//     return res.status(201).json({
-//       message: data.message,
-//     });
-//   }
-//   if (data.message === "Successfully verified user") {
-//     return res.redirect(301, `${CLIENT_URL}/login`);
-//   }
-
-//   if (data.message?.message === "You have successfully logged in") {
-//     return res.status(200).json(data.message);
-//   }
-
-//   //IF a USERINPUT error was encountered along the line, output the error
-//   else if (data.Error) {
-//     return res.status(400).json({
-//       Error: data.Error,
-//     });
-//   }
-//   //If the error is coming from the server, output this error
-//   return res.status(500).json({
-//     Error: "Internal Server error",
-//   });
-// };
 
 export default {
   SuccessfulResponse,
