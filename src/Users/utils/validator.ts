@@ -16,15 +16,6 @@ export const registerSchema = Joi.object().keys({
     .email({ tlds: { allow: false } })
     .label("email")
     .messages({ "string.only": "{{#label}} must be a valid email" }),
-  // password: Joi.string()
-  //   .pattern(new RegExp("[ A-Za-z0-9_@./#&+-]*$"))
-  //   .min(8)
-  //   .required(),
-  // confirm_password: Joi.any()
-  //   .equal(Joi.ref("password"))
-  //   .label("Confirm password")
-  //   .messages({ "any.only": "{{#label}} does not match" })
-  //   .required(),
 });
 
 export const loginSchema = Joi.object().keys({
