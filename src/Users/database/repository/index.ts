@@ -1,7 +1,3 @@
-import {
-  SuperAdminAttributes,
-  SuperAdminInstance,
-} from "../../../migrations/Super";
 import { SuperAdminRepositoryDetails } from "./superRepository.dto";
 import StatusResponseObject from "../../../http-Response/index";
 import { GenerateSignature, validatePassword } from "../../utils/validator";
@@ -12,6 +8,7 @@ import {
   SERVER_URL,
 } from "../../../config/DbConfig";
 import { UserLogin } from "../../services/client-service.dto";
+import db from "../../../models";
 
 /**===================================== Register SuperAdmin ===================================== **/
 
@@ -19,7 +16,7 @@ const CreateSuperRepository = async (
   userInput: SuperAdminRepositoryDetails
 ) => {
   //check if the user exists
-  const User = await SuperAdminInstance.findOne({
+  const User = await db.Users.findOne({
     where: { email: userInput.email },
   });
 
@@ -31,7 +28,7 @@ const CreateSuperRepository = async (
   let createdUser;
 
   if (!User) {
-    createdUser = await SuperAdminInstance.create({
+    createdUser = await db.Users.create({
       firstName: userInput.firstName,
       lastName: userInput.lastName,
       email: userInput.email,
@@ -39,8 +36,9 @@ const CreateSuperRepository = async (
       schoolName: userInput.schoolName,
       schoolLocation: userInput.schoolLocation,
       salt: userInput.salt,
-      role: "super",
+      permissions: "owner",
     });
+            
     if (!createdUser) {
       return StatusResponseObject.UserInputOrOutputError(
         "unable to create user"
@@ -77,14 +75,14 @@ const CreateSuperRepository = async (
 
 const VerifySuperRepository = async (id: string) => {
   // Find the user with the matching verification token
-  const user = await SuperAdminInstance.findOne({ where: { id } });
+  const user = await db.Users.findOne({ where: { id } });
   if (!user) {
     return StatusResponseObject.UserInputOrOutputError(
       "Invalid verification token"
     );
   }
   // Set the user's verified status to true
-  const User = await SuperAdminInstance.update(
+  const User = await db.Users.update(
     { verified: true },
     { where: { id } }
   );
@@ -95,7 +93,7 @@ const VerifySuperRepository = async (id: string) => {
 
 const LoginRepository = async (userInput: UserLogin) => {
   //check if the user exist
-  // const User = await SuperAdminInstance.findOne({ email: userInput.email });
+  // const User = await db.Users.findOne({ email: userInput.email });
   // if (!User) {
   //   return StatusResponseObject.UserInputOrOutputError(
   //     "Incorrect login details"

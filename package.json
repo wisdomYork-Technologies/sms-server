@@ -8,7 +8,7 @@
   "author": "ifiokInyang <ifiok.inyang@decagon.dev>",
   "scripts": {
     "compile": "tsc --w",
-    "start:dev": "sequelize-cli db:migrate && nodemon dist/index.js",
+    "start:dev": "nodemon dist/index.js",
     "start:prod": "tsc && node dist/index.js",
     "migrateUp": "sequelize-cli db:migrate",
     "migrateDown": "sequelize-cli db:migrate:undo",
@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "global": "^4.4.0",
     "http-error": "^0.0.6",
     "http-status-codes": "^2.2.0",
     "joi": "^17.9.1",

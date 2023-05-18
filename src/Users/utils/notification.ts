@@ -1,12 +1,8 @@
 import nodemailer from "nodemailer";
-import {
-  FromAdminMail,
-  userSubject,
-} from "../../config/DbConfig";
+import { FromAdminMail, userSubject } from "../../config/DbConfig";
 import dotenv from "dotenv";
 import { EmailPayload } from "./interface.dto";
 dotenv.config();
-
 
 const transport = nodemailer.createTransport({
   service: "gmail",
@@ -38,7 +34,6 @@ export const mailSent = async (
     console.log(err);
   }
 };
-
 
 export const RegistrationEmail = (link: string, user: EmailPayload): string => {
   let response = `

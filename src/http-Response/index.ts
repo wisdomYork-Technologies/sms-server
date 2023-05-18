@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { CLIENT_URL } from "../config/DbConfig";
-import { LoginResponseData } from "../superAdmin/utils/interface.dto";
+import { LoginResponseData } from "../Users/utils/interface.dto";
 import { StatusCodes } from "http-status-codes";
 
 //Used for returning a success message after creating a resource in the database
@@ -18,7 +18,6 @@ const SuccessfullyLoggedIn = (data: LoginResponseData) => {
 const UserInputOrOutputError = (errMessage: any) => {
   return { Error: errMessage };
 };
-
 
 class HttpUserStatus {
   CreateSuccessOrFailure(data: any, res: Response) {
@@ -39,11 +38,11 @@ class HttpUserStatus {
     //   StatusCodes.MOVED_PERMANENTLY,
     //   `${CLIENT_URL}/login`
     // );
- if (data && "Error" in data) {
-   return this.UserInputError(data, res);
- } else {
-   return res.redirect(StatusCodes.MOVED_PERMANENTLY, `${CLIENT_URL}/login`);;
- }
+    if (data && "Error" in data) {
+      return this.UserInputError(data, res);
+    } else {
+      return res.redirect(StatusCodes.MOVED_PERMANENTLY, `${CLIENT_URL}/login`);
+    }
     // userInputErrorHandler(data, res, successRedirect);
   }
 
